@@ -1,0 +1,107 @@
+<section class="sct-color-1 slice">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 post_images_container">
+        <div class="post-item">
+<!-- post_imagesコントローラから渡させれた@post_image変数から投稿画像やユーザ名などを表示 -->
+    <div class="post-meta-top">
+      <div class="post-image">
+        <%= attachment_image_tag @post_image, :image %>
+      </div>
+    </div>
+    <div class="post-content">
+        <h2 class="post-title"><%= @post_image.shop_name %></h2>
+        <ul class="meta-info-cells v4 float-wrapper">
+        <li>
+        <i class="fa fa-user"></i>By<a href="#">
+           <%= @post_image.user.name %></a>
+        </li>
+        <li>
+<!-- 投稿日時を表示するために日時を整形しているメソッド。('%Y/%m/%d')これは
+日時表示のフォーマットを指定する時に使われるので覚える -->
+          <i class="fa fa-calendar"></i><%= @post_image.created_at.strftime('%Y/%m/%d') %>
+        </li>
+<!-- favorited_by?は、投稿された画像のイイねに自分が含まれているかどうかを判定後、表示と機能を分けている。 -->
+<% if @post_image.favorited_by?(current_user) %>
+  <li>
+    <a href="#">
+      <%= link_to post_image_favorites_path(@post_image), method: :delete do %>
+        <i class="fa fa-heart" aria-hidden="true" style="color: red;"></i>
+        <a href="#"><%= @post_image.favorites.count %> いいね</a>
+      <% end %>
+    </a>
+  </li>
+<% else %>
+  <li>
+    <a href="#">
+      <%= link_to post_image_favorites_path(@post_image), method: :post do %>
+        <i class="fa fa-heart-o" aria-hidden="true"></i>
+        <%= @post_image.favorites.count %> いいね
+      <% end %>
+    </a>
+  </li>
+<% end %>
+        <li>
+          <i class="fa fa-heart"></i>
+          <a href="#">202 いいね</a>
+        </li>
+<!-- コメント件数表示のためのヘルパー -->
+        <li>
+          <i class="fa fa-comment"></i>
+          <a href="#comments">4</a>
+        </li>
+        <li>
+          <i class="fa fa-comment"></i>
+          <a href="#comments"><%= @post_image.post_comments.count %></a>
+        </li>
+        </ul>
+        <div class="post-content-inner mt-20">
+            <p><%= @post_image.caption %></p>
+        </div>
+<!-- コメント件数表示のためのヘルパー -->
+        <div class="comment-list bt style-2" id="comments">
+          <div class="float-wrapper">
+              <h2 class="comment-count"><%= @post_image.post_comments.count %>件コメント</h2>
+        </div>
+    </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- コメント本文の表示のためのヘルパー -->
+  <ol>
+    <% @post_image.post_comments.each do |post_comment| %>
+        <li class="comment">
+            <div class="comment-body bb">
+                <div class="comment-avatar">
+                    <div class="avatar">
+                        <%= image_tag('sample-author1.jpg', style: "width: 60px; height: 60px;") %>
+                    </div>
+                </div>
+                <div class="comment-text">
+                    <div class="comment-author clearfix">
+                        <a href="#" class="link-author"><%= post_comment.user.name %></a>
+                        <span class="comment-meta">
+                          <span class="comment-date"><%= post_comment.created_at.strftime('%Y/%m/%d') %></span>
+                        </span>
+                    </div>
+                    <div class="comment-entry"><%= post_comment.comment %></div>
+                </div>
+            </div>
+        </li>
+    <% end %>
+</ol>
+<!-- コメント入力フォームのためのヘルパー -->
+<!-- １つの投稿画像に対して複数のコメントをつけるために結びついているので
+form_forのデータを格納する箱は二つ用意する必要がある。 -->
+<%= form_for [@post_image, @post_comment] do |f| %>
+    <div class="row">
+        <div class="col-sm-12">
+            <%= f.text_field :comment, class: "form-control",placeholder: "コメントをここに" %>
+        </div>
+    </div>
+    <%= f.submit "送信する", class: "btn btn-lg btn-base-1 mt-20 pull-right" %>
+<% end %>
+</section>

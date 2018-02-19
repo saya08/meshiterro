@@ -1,0 +1,52 @@
+<section class="sct-color-1 slice">
+  <div class="container-fluid masonry-container">
+    <div class="row">
+      <div class="col-md-8 col-sm-offset-2">
+        <div class="masonry-wrapper-cols">
+          <div class="masonry-gutter"></div>
+<!-- 〜viewをシンプルに書くためのヘルパー〜 -->
+<!-- 以下ログイン後のトップページに投稿された画像をタイムラインに表示するためのコード -->
+<!-- コントローラから渡されたpost_images変数に入っているハッシュ（複数のデータを持つことのできるオブジェクト）から１つずつ取り出してpost_image変数へ格納する。 -->
+         <% @post_images.each do |post_image| %>
+            <div class="masonry-block">
+              <div class="block block-image v1">
+                <div class="block-image">
+                  <div class="view view-first">
+<!-- 各投稿画像へ詳細画面へのリンクを設定している -->
+                  <%= link_to post_image_path(post_image.id) do %>
+<!-- attachment_image_tagはrefile(ファイルうp用Gem)のimgタグを作成してくれるヘルパー。post_imageモデルの中のimage_idを指定するとrefileが自動的に解釈して保存された画像へのimgタグを生成する -->
+                    <%= attachment_image_tag post_image, :image %>
+                  <% end %>
+                  </div>
+                </div>
+                <div class="block-content">
+                  <%= image_tag('sample-author1.jpg', class: "img-circle pull-left profile-thumb") %>
+                  <h3 class="block-title">
+<!-- post_imageモデルに定義されているテーブル内のshop_nameカラムを表示する -->
+                    <a href="#"><i class="fa fa-map-marker"></i><%= post_image.shop_name %></a>
+                  </h3>
+<!-- post_imageモデルに定義されているcaptionカラム(一言コメント)を表示する。 -->
+                  <p><%= post_image.caption %></p>
+                  <ul class="inline-meta">
+<!-- post_imageモデルに定義されている（1:nの関係）user_idに関連付いたuserモデル(ユーザ情報を操作する)のnameカラムを表示する -->
+                    <li>By
+                      <%= post_image.user.name %>
+                    </li>
+                    <li>
+                    <a href="#">23 コメント</a>
+                    </li>
+                    <li>
+                    <a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          <% end %>
+<!-- kaminariの利用（ページャ（ページめくり機能）の実装） -->
+<%= paginate @post_images, class: "pagenate" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
